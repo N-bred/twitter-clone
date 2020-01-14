@@ -1,0 +1,42 @@
+* REQUIREMENTS *
+
+* DB
+* 
+* Tables:
+  * users
+  * posts
+  * user_preferences
+  * post_likes
+  * post_retweets
+  * post_pics  
+  * comment_likes
+  * comment_retweets
+  * comment_pics
+  * follows
+  * thread
+  * thread_comments
+*
+*
+*
+* BACKEND
+*
+* API Rest
+* Auth
+* Validation
+* 
+*
+*
+*
+*
+*
+* FRONTEND
+*
+* front page
+* variables themes 
+* detail page
+* last posts component sidebar
+* infinite scrolling in front page
+* user admin page
+* forms for posts
+* 
+
