@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { createConnection, Connection } from 'typeorm';
 import { App } from './app';
-import { options } from './db/dbconfig';
+import { options } from '../dbconfig';
 import { Routes } from './routes/routes';
 
 createConnection(options).then((connection: Connection) => {
