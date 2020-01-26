@@ -13,5 +13,13 @@ export function Routes(connection: Connection) {
 
   router.get('/users', userController.getAll);
 
+  router.get('/users/:id', userController.getById);
+
+  router.post('/new/user', userController.createUser);
+
+  router.put('/users', userController.updateUser);
+
+  router.delete('/users', userController.deleteUser);
+
   return router;
 }
