@@ -9,21 +9,36 @@ export class UserController {
   }
 
   public getAll = async (req: Request, res: Response) => {
-    const user = await this.repository.find();
-    return res.json(user);
+    // const users = await this.repository.find();
+
+    const users = await this.repository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.posts', 'post')
+      .getMany();
+
+    return res.json(
+      users.map(arr => {
+        delete arr.password;
+        delete arr.email;
+
+        return arr;
+      })
+    );
   };
 
-  // public getAll = async (req: Request, res: Response) => {
-  //   const user = await this.repository.find();
-  //   return res.json(user);
-  // };
-
   public getById = async (req: Request, res: Response) => {
-    const user = await this.repository.findOne(req.params.id);
+    const user = await this.repository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.posts', 'post')
+      .where(`user.id = ${req.params.id}`)
+      .getOne();
 
     if (!user) {
       return res.status(404).json({ status: 'User not found' });
     }
+
+    delete user.password;
+    delete user.email;
 
     return res.json(user);
   };
@@ -40,8 +55,8 @@ export class UserController {
 
   public updateUser = async (req: Request, res: Response) => {
     try {
-      await this.repository.update(req.body.id, req.body);
-      const user = this.repository.findOne(req.body.id);
+      await this.repository.update(req.params.id, req.body);
+      const user = this.repository.findOne(req.params.id);
 
       return res.json({ ...user, status: 'User updated' });
     } catch (e) {
@@ -51,7 +66,7 @@ export class UserController {
 
   public deleteUser = async (req: Request, res: Response) => {
     try {
-      await this.repository.delete(req.body.id);
+      await this.repository.delete(req.params.id);
       return res.json({ status: 'User deleted' });
     } catch (e) {
       return res.sendStatus(500).json({ status: 'Server error' });

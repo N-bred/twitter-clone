@@ -1,25 +1,17 @@
 import { Router } from 'express';
 import { Connection } from 'typeorm';
-import { UserController } from '../controllers/userController';
+import { userRoutes } from './user.routes';
+import { postRoutes } from './post.routes';
 
 export function Routes(connection: Connection) {
   const router = Router();
-
-  const userController = new UserController(connection);
 
   router.get('/', (req, res) => {
     res.send('Hello world');
   });
 
-  router.get('/users', userController.getAll);
-
-  router.get('/users/:id', userController.getById);
-
-  router.post('/new/user', userController.createUser);
-
-  router.put('/users', userController.updateUser);
-
-  router.delete('/users', userController.deleteUser);
+  router.use('/users', userRoutes(connection));
+  router.use('/posts', postRoutes(connection));
 
   return router;
 }

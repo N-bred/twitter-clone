@@ -12,14 +12,14 @@ export class PostPics {
 
   @Column({
     type: 'datetime',
-    default: () => "date('now')"
+    default: () => "datetime('now', 'localtime')"
   })
   createdAt: string | undefined;
 
   @Column({
     type: 'datetime',
-    default: () => "date('now')",
-    onUpdate: "date('now')"
+    default: () => "datetime('now', 'localtime')",
+    onUpdate: "datetime('now', 'localtime')"
   })
   updatedAt: string | undefined;
 

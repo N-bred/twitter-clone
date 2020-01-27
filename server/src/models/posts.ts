@@ -1,10 +1,4 @@
-import {
-  Column,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-  OneToMany,
-  Entity
-} from 'typeorm';
+import { Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, Entity } from 'typeorm';
 import { User } from './users';
 import { Threads } from './threads';
 import { PostPics } from './postPics';
@@ -21,14 +15,14 @@ export class Post {
 
   @Column({
     type: 'datetime',
-    default: () => "date('now')"
+    default: () => "datetime('now', 'localtime')"
   })
   createdAt: string | undefined;
 
   @Column({
     type: 'datetime',
-    default: () => "date('now')",
-    onUpdate: "date('now')"
+    default: () => "datetime('now', 'localtime')",
+    onUpdate: "datetime('now', 'localtime')"
   })
   updatedAt: string | undefined;
 
