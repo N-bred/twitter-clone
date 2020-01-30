@@ -23,13 +23,13 @@ export class Follows {
     type => User,
     user => user.userPreferences
   )
-  follower: User | undefined;
+  follower: User | number | undefined;
 
   @ManyToOne(
     type => User,
     user => user.userPreferences
   )
-  followed: User | undefined;
+  followed: User | number | undefined;
 
   // Relations
 
