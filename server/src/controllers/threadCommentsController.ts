@@ -9,19 +9,21 @@ export class ThreadsCommentsController {
   }
 
   public getAllByUser = async (req: Request, res: Response) => {
+    const { userId } = req.params;
     const comments = await this.repository
       .createQueryBuilder('comment')
       .leftJoinAndSelect('comment.user', 'user')
-      .where(`user.id = ${req.params.userId}`)
+      .where('user.id = :userId', { userId })
       .getMany();
 
     return res.json(comments);
   };
   public getAllByThread = async (req: Request, res: Response) => {
+    const { threadId } = req.params;
     const comments = await this.repository
       .createQueryBuilder('comment')
       .leftJoinAndSelect('comment.threads', 'thread')
-      .where(`thread.id = ${req.params.threadId}`)
+      .where('thread.id = :threadId', { threadId })
       .getMany();
 
     return res.json(comments);

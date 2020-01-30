@@ -20,8 +20,6 @@ export class UserController {
     return res.json(
       users.map(arr => {
         const { followed, followers } = arr;
-        delete arr.password;
-        delete arr.email;
         delete arr.followers;
 
         return { ...arr, following: followers?.length, followed: followed?.length };
@@ -30,12 +28,13 @@ export class UserController {
   };
 
   public getById = async (req: Request, res: Response) => {
+    const { id } = req.params;
     const user = await this.repository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.posts', 'post')
       .leftJoinAndSelect('user.followers', 'followers')
       .leftJoinAndSelect('user.followed', 'followed')
-      .where(`user.id = ${req.params.id}`)
+      .where('user.id = :id', { id })
       .getOne();
 
     if (!user) {
@@ -43,9 +42,6 @@ export class UserController {
     }
 
     const { followers, followed } = user;
-
-    delete user.password;
-    delete user.email;
     delete user.followers;
 
     return res.json({ ...user, following: followers?.length, followed: followed?.length });

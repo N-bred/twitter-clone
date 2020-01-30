@@ -31,7 +31,7 @@ export class User {
   @Column({ type: 'int' })
   age: number | undefined;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', select: false })
   email: string | undefined;
 
   @Column({ type: 'varchar' })
@@ -43,7 +43,7 @@ export class User {
   @Column({ type: 'varchar' })
   status: string | undefined;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', select: false })
   password: string | undefined;
 
   @Column({

@@ -12,6 +12,7 @@ export class FollowsController {
   }
 
   public getAllFollowers = async (req: Request, res: Response) => {
+    const { userId } = req.params;
     const followers = await this.userRepository
       .createQueryBuilder('user')
       .where(qb => {
@@ -19,17 +20,17 @@ export class FollowsController {
           .subQuery()
           .select('follows.followerId')
           .from(Follows, 'follows')
-          .where('follows.followed = :userId')
+          .where('follows.followed = :userId', { userId })
           .getQuery();
 
         return 'user.id IN ' + subQuery;
       })
-      .setParameter('userId', req.params.userId)
       .getMany();
 
     return res.json(followers);
   };
   public getAllFollowed = async (req: Request, res: Response) => {
+    const { userId } = req.params;
     const followed = await this.userRepository
       .createQueryBuilder('user')
       .where(qb => {
@@ -37,12 +38,11 @@ export class FollowsController {
           .subQuery()
           .select('follows.followed')
           .from(Follows, 'follows')
-          .where('follows.follower = :userId')
+          .where('follows.follower = :userId', { userId })
           .getQuery();
 
         return 'user.id IN ' + subQuery;
       })
-      .setParameter('userId', req.params.userId)
       .getMany();
 
     return res.json(followed);

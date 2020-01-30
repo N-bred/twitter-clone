@@ -9,19 +9,21 @@ export class ThreadsController {
   }
 
   public getAllByUser = async (req: Request, res: Response) => {
+    const { userId } = req.params;
     const threads = await this.repository
       .createQueryBuilder('thread')
       .leftJoinAndSelect('thread.user', 'user')
-      .where(`user.id = ${req.params.userId}`)
+      .where('user.id = :userId', { userId })
       .getMany();
 
     return res.json(threads);
   };
   public getAllByPost = async (req: Request, res: Response) => {
+    const { postId } = req.params;
     const threads = await this.repository
       .createQueryBuilder('thread')
       .leftJoinAndSelect('thread.post', 'post')
-      .where(`post.id = ${req.params.postId}`)
+      .where('post.id = :postId', { postId })
       .getMany();
 
     return res.json(threads);

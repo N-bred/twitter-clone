@@ -9,10 +9,11 @@ export class UserPreferencesController {
   }
 
   public getById = async (req: Request, res: Response) => {
+    const { id } = req.params;
     const userPref = await this.repository
       .createQueryBuilder('userPref')
       .innerJoinAndSelect('userPref.user', 'user')
-      .where(`user.id = ${req.params.id}`)
+      .where('user.id = :id', { id })
       .getOne();
 
     if (!userPref) {
