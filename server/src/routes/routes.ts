@@ -6,6 +6,10 @@ import { userPreferencesRoutes } from './userPreferences.routes';
 import { threadRoutes } from './threads.routes';
 import { threadCommentRoutes } from './threadComments.routes';
 import { followRoutes } from './follows.routes';
+import { postLikesRoutes } from './postLikes.routes';
+import { postRetweetsRoutes } from './postRetweets.routes';
+import { commentLikesRoutes } from './threadLikes.routes';
+import { commentRetweetsRoutes } from './threadRetweets.routes';
 
 export function Routes(connection: Connection) {
   const router = Router();
@@ -21,6 +25,10 @@ export function Routes(connection: Connection) {
   router.use('/threads', threadRoutes(connection));
   router.use('/comments', threadCommentRoutes(connection));
   router.use('/follows', followRoutes(connection));
+  router.use('/plikes', postLikesRoutes(connection));
+  router.use('/clikes', commentLikesRoutes(connection));
+  router.use('/pretweets', postRetweetsRoutes(connection));
+  router.use('/cretweets', commentRetweetsRoutes(connection));
 
   return router;
 }
