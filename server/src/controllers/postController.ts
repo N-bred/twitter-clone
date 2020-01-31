@@ -9,18 +9,52 @@ export class PostController {
     this.repository = connection.getRepository(Post);
   }
 
-  public getAll = async (req: Request, res: Response) => {
-    const posts = await this.repository.find();
+  private modifyResponse(post: Post) {
+    const { postLikes, postRetweets, postPics } = post;
 
-    if (posts) return res.json(posts);
+    delete post.postLikes;
+    delete post.postRetweets;
+    delete post.postPics;
+
+    return {
+      ...post,
+      threads: post.threads?.length,
+      likes: postLikes?.length,
+      retweets: postRetweets?.length,
+      pics: postPics,
+      user: { id: post.user?.id }
+    };
+  }
+
+  public getAll = async (req: Request, res: Response) => {
+    const posts = await this.repository
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.threads', 'threads')
+      .leftJoinAndSelect('post.postLikes', 'likes')
+      .leftJoinAndSelect('post.postRetweets', 'retweets')
+      .leftJoinAndSelect('post.postPics', 'pics')
+      .leftJoinAndSelect('post.user', 'user')
+      .getMany();
+
+    if (posts) return res.json(posts.map(this.modifyResponse));
 
     return res.status(404).json({ status: 'There are not posts yet' });
   };
 
   public getById = async (req: Request, res: Response) => {
-    const post = await this.repository.findOne(req.params.id);
+    const post = await this.repository
+      .createQueryBuilder('post')
+      .where('post.id = :id', { id: Number(req.params.id) })
+      .leftJoinAndSelect('post.threads', 'threads')
+      .leftJoinAndSelect('post.postLikes', 'likes')
+      .leftJoinAndSelect('post.postRetweets', 'retweets')
+      .leftJoinAndSelect('post.postPics', 'pics')
+      .leftJoinAndSelect('post.user', 'user')
+      .getOne();
 
-    return post ? res.json(post) : res.status(404).json({ status: 'Post not found' });
+    if (post) return res.json(this.modifyResponse(post));
+
+    return res.status(404).json({ status: 'Post not found' });
   };
 
   public createPost = async (req: Request, res: Response) => {
