@@ -9,6 +9,13 @@ export class UserController {
     this.repository = connection.getRepository(User);
   }
 
+  private modifyResponse(user: User) {
+    const { followed, followers } = user;
+    delete user.followers;
+
+    return { ...user, following: followers?.length, followed: followed?.length };
+  }
+
   public getAll = async (req: Request, res: Response) => {
     const users = await this.repository
       .createQueryBuilder('user')
@@ -17,14 +24,11 @@ export class UserController {
       .leftJoinAndSelect('user.followed', 'followed')
       .getMany();
 
-    return res.json(
-      users.map(arr => {
-        const { followed, followers } = arr;
-        delete arr.followers;
+    if (!users) {
+      return res.status(404).json({ status: 'Not users found' });
+    }
 
-        return { ...arr, following: followers?.length, followed: followed?.length };
-      })
-    );
+    return res.json(users.map(this.modifyResponse));
   };
 
   public getById = async (req: Request, res: Response) => {
@@ -41,10 +45,7 @@ export class UserController {
       return res.status(404).json({ status: 'User not found' });
     }
 
-    const { followers, followed } = user;
-    delete user.followers;
-
-    return res.json({ ...user, following: followers?.length, followed: followed?.length });
+    return res.json(this.modifyResponse(user));
   };
 
   public createUser = async (req: Request, res: Response) => {
