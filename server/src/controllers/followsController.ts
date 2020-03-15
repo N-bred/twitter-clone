@@ -13,6 +13,7 @@ export class FollowsController {
 
   public getAllFollowers = async (req: Request, res: Response) => {
     const { userId } = req.params;
+
     const followers = await this.userRepository
       .createQueryBuilder('user')
       .where(qb => {

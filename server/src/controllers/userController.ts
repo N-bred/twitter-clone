@@ -38,6 +38,8 @@ export class UserController {
       .leftJoinAndSelect('user.posts', 'post')
       .leftJoinAndSelect('user.followers', 'followers')
       .leftJoinAndSelect('user.followed', 'followed')
+      .leftJoinAndSelect('user.postRetweets', 'pretweets')
+      .leftJoinAndSelect('user.commentRetweets', 'cretweets')
       .where('user.id = :id', { id })
       .getOne();
 

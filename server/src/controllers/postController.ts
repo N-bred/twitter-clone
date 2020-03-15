@@ -9,7 +9,7 @@ export class PostController {
     this.repository = connection.getRepository(Post);
   }
 
-  private modifyResponse(post: Post) {
+  private modifyResponse(post: Post, showThreads: boolean) {
     const { postLikes, postRetweets, postPics } = post;
 
     delete post.postLikes;
@@ -18,11 +18,12 @@ export class PostController {
 
     return {
       ...post,
-      threads: post.threads?.length,
       likes: postLikes?.length,
+      threads: showThreads ? post.threads : post.threads?.length,
       retweets: postRetweets?.length,
       pics: postPics,
-      user: { id: post.user?.id }
+      user: { id: post.user?.id },
+      userLikes: postLikes?.map(x => ({ userId: x.user?.id }))
     };
   }
 
@@ -31,12 +32,13 @@ export class PostController {
       .createQueryBuilder('post')
       .leftJoinAndSelect('post.threads', 'threads')
       .leftJoinAndSelect('post.postLikes', 'likes')
+      .leftJoinAndSelect('likes.user', 'userLikes')
       .leftJoinAndSelect('post.postRetweets', 'retweets')
       .leftJoinAndSelect('post.postPics', 'pics')
       .leftJoinAndSelect('post.user', 'user')
       .getMany();
 
-    if (posts) return res.json(posts.map(this.modifyResponse));
+    if (posts) return res.json(posts.map(post => this.modifyResponse(post, false)));
 
     return res.status(404).json({ status: 'There are not posts yet' });
   };
@@ -47,12 +49,13 @@ export class PostController {
       .where('post.id = :id', { id: Number(req.params.id) })
       .leftJoinAndSelect('post.threads', 'threads')
       .leftJoinAndSelect('post.postLikes', 'likes')
+      .leftJoinAndSelect('likes.user', 'userLikes')
       .leftJoinAndSelect('post.postRetweets', 'retweets')
       .leftJoinAndSelect('post.postPics', 'pics')
       .leftJoinAndSelect('post.user', 'user')
       .getOne();
 
-    if (post) return res.json(this.modifyResponse(post));
+    if (post) return res.json(this.modifyResponse(post, true));
 
     return res.status(404).json({ status: 'Post not found' });
   };
